@@ -12,26 +12,31 @@ buttons.forEach(button => {
         if (type === "num") {
             if (first) {
                 num1 += buttonClicked;
+                display = num1;
             } else {
                 num2 += buttonClicked;
-            }
-            if (display === "0") {
-                display = buttonClicked;
-            } else {
-                display += buttonClicked;
+                display = num2;
             }
         } else if (type === "op") {
+            if (op) {
+                const ans = operate(Number(num1), op, Number(num2));
+                num1 = ans.toString();
+                num2 = "";
+                display = num1 + " " + buttonClicked + " ";
+            } else {
+                display += " " + buttonClicked + " ";
+            }
             op = buttonClicked;
-            display = display + " " + op + " ";
             first = false;
         } else if (type === "equal") {
-            let ans = operate(Number(num1), op, Number(num2));
-            ans = Math.round(ans * 1000) / 1000;
-            display = ans.toString();
-            first = true;
-            num1 = ans.toString();
-            num2 = "";
-            op = "";
+            if (op && num2) {
+                const ans = operate(Number(num1), op, Number(num2));
+                display = ans.toString();
+                num1 = ans.toString();
+                num2 = "";
+                op = "";
+                first = true;
+            }
         } else if (type === "clear") {
             display = "0";
             num1 = "";
@@ -39,22 +44,12 @@ buttons.forEach(button => {
             op = "";
             first = true;
         } else if (type === "delete") {
-            if (display.length > 1) {
-                display = display.slice(0, -1);
-                if (first) {
-                    num1 = num1.slice(0, -1);
-                } else {
-                    num2 = num2.slice(0, -1);
-                }
-            } else if (display.length === 1) {
-                display = "0";
-                if (first) {
-                    num1 = "";
-                } else {
-                    op = "";
-                    first = true;
-                    num2 = "";
-                }
+            if (first) {
+                num1 = num1.slice(0, -1);
+                display = num1 || "0";
+            } else {
+                num2 = num2.slice(0, -1);
+                display = num2 || "0";
             }
         }
 
